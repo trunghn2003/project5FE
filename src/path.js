@@ -1,0 +1,1 @@
+export const path = "https://zx8fxt-8081.csb.app/api/";
