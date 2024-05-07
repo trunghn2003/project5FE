@@ -1,1 +1,1 @@
-export const path = "https://zx8fxt-8081.csb.app/api/";
+export const path = "http://localhost:8081/api/";

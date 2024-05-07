@@ -15,7 +15,6 @@ function UserDetail() {
           try {
               const userData =  await fetchModel(`${path}user/${userId}`)
               setUser(userData);
-              console.log(userData);
           } catch (error) {
               console.error('Error fetching user:', error);
           }
