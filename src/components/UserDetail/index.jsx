@@ -14,6 +14,7 @@ function UserDetail() {
       const fetchUser = async () => {
           try {
               const userData =  await fetchModel(`${path}user/${userId}`)
+              
               setUser(userData);
           } catch (error) {
               console.error('Error fetching user:', error);
@@ -22,7 +23,6 @@ function UserDetail() {
 
       fetchUser();
   }, [userId]);
-
   return (
     <Grid container>
         <Grid item xs={12}>
