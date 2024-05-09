@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { fetchModel } from "../../lib/fetchModelData";
 import { path } from "../../path";
-
+import "./styles.css";
 const UserPhotos = () => {
   const [photos, setPhotos] = useState([]);
   const [user, setUser] = useState(null);
@@ -125,18 +125,18 @@ const UserPhotos = () => {
   return (
     <Grid container spacing={3} justifyContent="center">
       {photos.map((photo) => (
-        <Grid item xs={12} sm={6} key={photo._id}>
-          <Card variant="outlined">
+        <Grid item xs={12} sm={8} key={photo._id}>
+          <Card variant="outlined" className="user-photo-card">
             <CardHeader
               title={
-                <Link
-                  to={`/users/${user._id}`}
-                >{`${user.first_name} ${user.last_name}`}</Link>
+                <Link to={`/users/${user._id}`} className="user-link">
+                  {`${user.first_name} ${user.last_name}`}
+                </Link>
               }
               subheader={new Date(photo.date_time).toLocaleString()}
               avatar={
                 user && (
-                  <Avatar style={{ backgroundColor: "#FF7F50" }}>
+                  <Avatar className="avatar" style={{ backgroundColor: "#FF7F50" }}>
                     {user.first_name[0]}
                     {user.last_name[0]}
                   </Avatar>
@@ -151,22 +151,19 @@ const UserPhotos = () => {
                   : undefined
               }
               alt={photo.file_name}
+              className="card-media"
             />
             <CardContent>
               <Typography variant="subtitle1">Comments:</Typography>
               <Divider />
               {photo.comments.map((c) => (
-                <List key={c._id}>
+                <List key={c._id} className="comment-list">
                   <Typography variant="subtitle2">
-                    <Link
-                      to={`/users/${c.user_id}`}
-                    >{`${c.user.first_name} ${c.user.last_name}`}</Link>
+                    <Link to={`/users/${c.user_id}`} className="user-link">
+                      {`${c.user.first_name} ${c.user.last_name}`}
+                    </Link>
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    color="textSecondary"
-                    gutterBottom
-                  >
+                  <Typography variant="caption" color="textSecondary" gutterBottom>
                     {new Date(c.date_time).toLocaleString()}
                   </Typography>
                   {editCommentId === c._id ? (
@@ -175,29 +172,23 @@ const UserPhotos = () => {
                       variant="outlined"
                       value={editCommentText}
                       onChange={(e) => setEditCommentText(e.target.value)}
+                      className="edit-comment-textfield"
                     />
                   ) : (
-                    <Typography variant="body1">{`"${c.comment}"`}</Typography>
+                    <Typography variant="body1" className="comment-body">{`"${c.comment}"`}</Typography>
                   )}
                   {c.user_id === currentUser._id && (
-                    <IconButton
-                      onClick={() =>
-                        handleEditComment(photo._id, c._id, c.comment)
-                      }
-                    >
+                    <IconButton onClick={() => handleEditComment(photo._id, c._id, c.comment)} className="edit-button">
                       Edit
                     </IconButton>
                   )}
-                  {(c.user_id === currentUser._id ||
-                    photo.user_id === currentUser._id) && (
-                    <IconButton
-                      onClick={() => handleDeleteComment(photo._id, c._id)}
-                    >
+                  {(c.user_id === currentUser._id || photo.user_id === currentUser._id) && (
+                    <IconButton onClick={() => handleDeleteComment(photo._id, c._id)} className="delete-button">
                       Delete
                     </IconButton>
                   )}
                   {editCommentId === c._id && (
-                    <IconButton onClick={() => handleUpdateComment(photo._id)}>
+                    <IconButton onClick={() => handleUpdateComment(photo._id)} className="save-button">
                       Save
                     </IconButton>
                   )}
@@ -210,11 +201,13 @@ const UserPhotos = () => {
                 value={comments[photo._id]}
                 onChange={(e) => handleCommentChange(photo._id, e.target.value)}
                 margin="normal"
+                className="add-comment-textfield"
               />
               <Button
                 variant="contained"
                 color="primary"
                 onClick={() => handleAddComment(photo._id)}
+                className="post-comment-button"
               >
                 Post Comment
               </Button>
@@ -224,6 +217,7 @@ const UserPhotos = () => {
       ))}
     </Grid>
   );
+  
 };
 
 export default UserPhotos;
