@@ -68,6 +68,9 @@ const TopBar = ({ auth, setAuth }) => {
         </Typography>
         {user && (
           <>
+          <Button color="inherit" component={Link} to={`/upload-photo`}>
+              Add Photo
+            </Button>
             <Button color="inherit" component={Link} to={`/profile/${user._id}`}>
               Profile
             </Button>

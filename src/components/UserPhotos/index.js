@@ -26,7 +26,6 @@ const UserPhotos = () => {
   useEffect(() => {
     fetchUserDataAndPhotos();
   }, [userId]);
-
   const fetchUserDataAndPhotos = async () => {
     try {
       const userPhotos = await fetchModel(
@@ -98,10 +97,12 @@ const UserPhotos = () => {
             />
             <CardMedia
               component="img"
-              image={
-                photo.file_name && require(`../../images/${photo.file_name}`)
-              }
-              alt={photo.file_name}
+              // image={
+              //   photo.file_name && require(`../../images/${photo.file_name}`)
+                
+              // }
+              image={photo.file_name ? `http://localhost:8081/uploads/${photo.file_name}` : undefined}
+  alt={photo.file_name}
             />
             <CardContent>
               <Typography variant="subtitle1">Comments:</Typography>

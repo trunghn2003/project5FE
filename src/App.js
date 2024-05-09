@@ -12,6 +12,7 @@ import UserPhotos from "./components/UserPhotos";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from './components/Profile';
+import UploadPhoto from './components/UploadFile';
 
 const App = (props) => {
   const [auth, setAuth] = useState({
@@ -39,6 +40,7 @@ const App = (props) => {
                    <Route path="/profile/:userId" element={<Profile auth={auth} setAuth={setAuth} />} />
                     <Route path="/users/:userId" element={<UserDetail />} />
                     <Route path="/photos/:userId" element={<UserPhotos />} />
+                    <Route path="/upload-photo" element={<UploadPhoto />} />  
                     <Route path="/users" element={<UserList />} />
                   </>
                 ) : (
