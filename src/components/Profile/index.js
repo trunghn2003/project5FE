@@ -1,9 +1,9 @@
 // Profile.js
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
-function Profile({ auth, setAuth }) {
+function Profile({ auth, setAuth, users, updateUsers }) {
   const [userDetails, setUserDetails] = useState({
     login_name: '',
     first_name: '',
@@ -59,6 +59,8 @@ function Profile({ auth, setAuth }) {
       const updatedUser = await response.json();
       setAuth({ ...auth, user: updatedUser });
       setMessage({ type: 'success', text: 'Profile updated successfully' });
+      // After updating the profile
+      updateUsers();
     } else {
       setMessage({ type: 'danger', text: 'Error updating profile' });
     }

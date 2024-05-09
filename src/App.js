@@ -13,12 +13,20 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from './components/Profile';
 import UploadPhoto from './components/UploadFile';
+import { fetchModel } from './lib/fetchModelData';
+import { path } from './path';
 
 const App = (props) => {
   const [auth, setAuth] = useState({
     loggedIn: !!localStorage.getItem('token'),
     user: null
   });
+  const [users, setUsers] = useState([]);
+
+const updateUsers = async () => {
+  const updatedUsers = await fetchModel(`${path}user/list`);
+  setUsers(updatedUsers);
+}
   return (
     <Router>
       <div>
@@ -29,7 +37,7 @@ const App = (props) => {
           <div className="main-topbar-buffer" />
           <Grid item sm={3}>
             <Paper className="main-grid-item">
-              {auth.loggedIn ? <UserList /> : <Typography>Please log in to see the user list.</Typography>}
+              {auth.loggedIn ? <UserList users={users} updateUsers={updateUsers}  /> : <Typography>Please log in to see the user list.</Typography>}
             </Paper>
           </Grid>
           <Grid item sm={9}>
@@ -37,7 +45,7 @@ const App = (props) => {
               <Routes>
                 {auth.loggedIn ? (
                   <>
-                   <Route path="/profile/:userId" element={<Profile auth={auth} setAuth={setAuth} />} />
+                   <Route path="/profile/:userId" element={<Profile auth={auth} setAuth={setAuth} updateUsers={updateUsers} />} />
                     <Route path="/users/:userId" element={<UserDetail />} />
                     <Route path="/photos/:userId" element={<UserPhotos />} />
                     <Route path="/upload-photo" element={<UploadPhoto />} />  
