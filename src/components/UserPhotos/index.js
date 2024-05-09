@@ -12,6 +12,8 @@ import {
   CardContent,
   TextField,
   Button,
+  IconButton,
+  Icon,
 } from "@mui/material";
 import { fetchModel } from "../../lib/fetchModelData";
 import { path } from "../../path";
@@ -20,28 +22,25 @@ const UserPhotos = () => {
   const [photos, setPhotos] = useState([]);
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState({});
+  const [editCommentId, setEditCommentId] = useState(null); // State to track which comment is being edited
+  const [editCommentText, setEditCommentText] = useState(""); // State to hold the new comment text during editing
   const { userId } = useParams();
   const token = localStorage.getItem("token");
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     fetchUserDataAndPhotos();
   }, [userId]);
-  const fetchUserDataAndPhotos = async () => {
-    try {
-      const userPhotos = await fetchModel(
-        `${path}photo/photosOfUser/${userId}`
-      );
-      const userInfo = await fetchModel(`${path}user/${userId}`);
-      setPhotos(userPhotos || []);
-      setUser(userInfo);
-      setComments(
-        userPhotos.reduce((acc, photo) => ({ ...acc, [photo._id]: "" }), {})
-      );
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-    }
-  };
 
+  const fetchUserDataAndPhotos = async () => {
+    const userPhotos = await fetchModel(`${path}photo/photosOfUser/${userId}`);
+    const userInfo = await fetchModel(`${path}user/${userId}`);
+    setPhotos(userPhotos || []);
+    setUser(userInfo);
+    setComments(
+      userPhotos.reduce((acc, photo) => ({ ...acc, [photo._id]: "" }), {})
+    );
+  };
   const handleAddComment = async (photoId) => {
     const commentText = comments[photoId];
     if (!commentText.trim()) {
@@ -67,6 +66,55 @@ const UserPhotos = () => {
       setComments({ ...comments, [photoId]: "" }); // Clear the comment input after successful submission
     } else {
       alert("Failed to post comment");
+    }
+  };
+  const handleDeleteComment = async (photoId, commentId) => {
+    const response = await fetch(
+      `${path}photo/commentsOfPhoto/photo/${photoId}/comment/${commentId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (response.ok) {
+      alert("Comment deleted successfully");
+      fetchUserDataAndPhotos();
+    } else {
+      alert("Failed to delete comment");
+    }
+  };
+
+  const handleEditComment = (photoId, commentId, commentText) => {
+    setEditCommentId(commentId);
+    setEditCommentText(commentText);
+  };
+
+  const handleUpdateComment = async (photoId) => {
+    if (!editCommentText.trim()) {
+      alert("Comment cannot be empty");
+      return;
+    }
+
+    const response = await fetch(
+      `${path}photo/commentsOfPhoto/photo/${photoId}/comment/${editCommentId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ comment: editCommentText }),
+      }
+    );
+
+    if (response.ok) {
+      alert("Comment updated successfully");
+      setEditCommentId(null);
+      setEditCommentText("");
+      fetchUserDataAndPhotos();
+    } else {
+      alert("Failed to update comment");
     }
   };
 
@@ -97,12 +145,12 @@ const UserPhotos = () => {
             />
             <CardMedia
               component="img"
-              // image={
-              //   photo.file_name && require(`../../images/${photo.file_name}`)
-                
-              // }
-              image={photo.file_name ? `http://localhost:8081/uploads/${photo.file_name}` : undefined}
-  alt={photo.file_name}
+              image={
+                photo.file_name
+                  ? `http://localhost:8081/uploads/${photo.file_name}`
+                  : undefined
+              }
+              alt={photo.file_name}
             />
             <CardContent>
               <Typography variant="subtitle1">Comments:</Typography>
@@ -121,7 +169,38 @@ const UserPhotos = () => {
                   >
                     {new Date(c.date_time).toLocaleString()}
                   </Typography>
-                  <Typography variant="body1">{`"${c.comment}"`}</Typography>
+                  {editCommentId === c._id ? (
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      value={editCommentText}
+                      onChange={(e) => setEditCommentText(e.target.value)}
+                    />
+                  ) : (
+                    <Typography variant="body1">{`"${c.comment}"`}</Typography>
+                  )}
+                  {c.user_id === currentUser._id && (
+                    <IconButton
+                      onClick={() =>
+                        handleEditComment(photo._id, c._id, c.comment)
+                      }
+                    >
+                      Edit
+                    </IconButton>
+                  )}
+                  {(c.user_id === currentUser._id ||
+                    photo.user_id === currentUser._id) && (
+                    <IconButton
+                      onClick={() => handleDeleteComment(photo._id, c._id)}
+                    >
+                      Delete
+                    </IconButton>
+                  )}
+                  {editCommentId === c._id && (
+                    <IconButton onClick={() => handleUpdateComment(photo._id)}>
+                      Save
+                    </IconButton>
+                  )}
                 </List>
               ))}
               <TextField
