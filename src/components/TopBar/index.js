@@ -24,7 +24,7 @@ const TopBar = ({ auth, setAuth }) => {
         const response = await fetch(`http://localhost:8081/api/user/${userId}`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`  // Use the token from localStorage
+            'Authorization': `Bearer ${token}` 
           }
         });
         if (response.ok) {
