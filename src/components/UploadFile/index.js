@@ -1,11 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function UploadPhoto() {
   const [file, setFile] = useState(null);
-
+  const navigate = useNavigate();
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,6 +30,8 @@ function UploadPhoto() {
 
     if (response.ok) {
       alert("File uploaded successfully");
+      navigate(`/photos/${user._id}`)
+      
     } else {
       alert("Failed to upload file");
     }
