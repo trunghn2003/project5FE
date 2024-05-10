@@ -24,7 +24,8 @@
   
   .comment-list .edit-button,
   .comment-list .delete-button,
-  .comment-list .save-button {
+  .comment-list .save-button ,
+  .comment-list .cancel-button {
     margin-top: 8px;
     margin-bottom: 8px;
     padding: 4px;
@@ -37,7 +38,9 @@
   
   .comment-list .edit-button:hover,
   .comment-list .delete-button:hover,
-  .comment-list .save-button:hover {
+  .comment-list .save-button:hover, 
+  .comment-list .cancel-button:hover
+  {
     text-decoration: underline;
   }
   

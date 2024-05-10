@@ -13,7 +13,6 @@ import {
   TextField,
   Button,
   IconButton,
-  Icon,
 } from "@mui/material";
 import { fetchModel } from "../../lib/fetchModelData";
 import { path } from "../../path";
@@ -27,7 +26,6 @@ const UserPhotos = () => {
   const { userId } = useParams();
   const token = localStorage.getItem("token");
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  
 
   useEffect(() => {
     fetchUserDataAndPhotos();
@@ -39,7 +37,9 @@ const UserPhotos = () => {
     setPhotos(userPhotos || []);
     setUser(userInfo);
     setComments(
-      userPhotos.reduce((acc, photo) => ({ ...acc, [photo._id]: "" }), {})
+      userPhotos
+        ? userPhotos.reduce((acc, photo) => ({ ...acc, [photo._id]: "" }), {})
+        : {}
     );
   };
   const handleAddComment = async (photoId) => {
@@ -70,19 +70,20 @@ const UserPhotos = () => {
     }
   };
   const handleDeleteComment = async (photoId, commentId) => {
-    const response = await fetch(
-      `${path}photo/commentsOfPhoto/photo/${photoId}/comment/${commentId}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      const response = await fetch(
+        `${path}photo/commentsOfPhoto/photo/${photoId}/comment/${commentId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.ok) {
+        alert("Comment deleted successfully");
+        fetchUserDataAndPhotos();
+      } else {
+        alert("Failed to delete comment");
       }
-    );
-
-    if (response.ok) {
-      alert("Comment deleted successfully");
-      fetchUserDataAndPhotos();
-    } else {
-      alert("Failed to delete comment");
     }
   };
 
@@ -118,20 +119,25 @@ const UserPhotos = () => {
       alert("Failed to update comment");
     }
   };
+  const handleCancelEdit = () => {
+    setEditCommentId(null);
+    setEditCommentText("");
+  };
   const handleDeletePhoto = async (photoId) => {
-    const response = await fetch(`${path}photo/${photoId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    if (window.confirm("Are you sure you want to delete this photo?")) {
+      const response = await fetch(`${path}photo/${photoId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (response.ok) {
-      alert("Photo deleted successfully");
-      fetchUserDataAndPhotos();
-    } else {
-      alert("Failed to delete photo");
+      if (response.ok) {
+        alert("Photo deleted successfully");
+        fetchUserDataAndPhotos();
+      } else {
+        alert("Failed to delete photo");
+      }
     }
-  }
-
+  };
 
   const handleCommentChange = (photoId, value) => {
     setComments({ ...comments, [photoId]: value });
@@ -139,131 +145,154 @@ const UserPhotos = () => {
 
   return (
     <Grid container spacing={3} justifyContent="center">
-      {photos.map((photo) => (
-        <Grid item xs={12} sm={8} key={photo._id}>
-          <Card variant="outlined" className="user-photo-card">
-            <CardHeader
-              title={
-                <Link to={`/users/${user._id}`} className="user-link">
-                  {`${user.first_name} ${user.last_name}`}
-                </Link>
-              }
-              subheader={new Date(photo.date_time).toLocaleString()}
-              avatar={
-                user && (
-                  <Avatar
-                    className="avatar"
-                    style={{ backgroundColor: "#FF7F50" }}
-                  >
-                    {user.first_name[0]}
-                    {user.last_name[0]}
-                  </Avatar>
-                )
-              }
-            />
-            <CardMedia
-              component="img"
-              image={
-                photo.file_name
-                  ? `http://localhost:8081/uploads/${photo.file_name}`
-                  : undefined
-              }
-              alt={photo.file_name}
-              className="card-media"
-            />
-            <CardContent>
-              <Typography variant="subtitle1">Comments:</Typography>
-              <Divider />
-              {photo.comments.map((c) => (
-                <List key={c._id} className="comment-list">
-                  <Typography variant="subtitle2">
-                    <Link to={`/users/${c.user_id}`} className="user-link">
-                      {`${c.user.first_name} ${c.user.last_name}`}
+      {photos.length === 0 ? (
+        <>
+          <Grid item xs={12}>
+            <Typography
+              variant="h6"
+              style={{ textAlign: "center", margin: "20px" }}
+            >
+              No photos available. Please upload some images.
+            </Typography>
+          </Grid>
+        </>
+      ) : (
+        <>
+          {photos.map((photo) => (
+            <Grid item xs={12} sm={8} key={photo._id}>
+              <Card variant="outlined" className="user-photo-card">
+                <CardHeader
+                  title={
+                    <Link to={`/users/${user._id}`} className="user-link">
+                      {`${user.first_name} ${user.last_name}`}
                     </Link>
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="textSecondary"
-                    gutterBottom
+                  }
+                  subheader={new Date(photo.date_time).toLocaleString()}
+                  avatar={
+                    user && (
+                      <Avatar
+                        className="avatar"
+                        style={{ backgroundColor: "#FF7F50" }}
+                      >
+                        {user.first_name[0]}
+                        {user.last_name[0]}
+                      </Avatar>
+                    )
+                  }
+                />
+                <CardMedia
+                  component="img"
+                  image={
+                    photo.file_name
+                      ? `http://localhost:8081/uploads/${photo.file_name}`
+                      : undefined
+                  }
+                  alt={photo.file_name}
+                  className="card-media"
+                />
+                <CardContent>
+                  <Typography variant="subtitle1">Comments:</Typography>
+                  <Divider />
+                  {photo.comments.map((c) => (
+                    <List key={c._id} className="comment-list">
+                      <Typography variant="subtitle2">
+                        <Link to={`/users/${c.user_id}`} className="user-link">
+                          {`${c.user.first_name} ${c.user.last_name}`}
+                        </Link>
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        {new Date(c.date_time).toLocaleString()}
+                      </Typography>
+                      {editCommentId === c._id ? (
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          value={editCommentText}
+                          onChange={(e) => setEditCommentText(e.target.value)}
+                          className="edit-comment-textfield"
+                        />
+                      ) : (
+                        <Typography
+                          variant="body1"
+                          className="comment-body"
+                        >{`"${c.comment}"`}</Typography>
+                      )}
+                      {c.user_id === currentUser._id && (
+                        <IconButton
+                          onClick={() =>
+                            handleEditComment(photo._id, c._id, c.comment)
+                          }
+                          className="edit-button"
+                        >
+                          Edit
+                        </IconButton>
+                      )}
+                      {(c.user_id === currentUser._id ||
+                        photo.user_id === currentUser._id) && (
+                        <IconButton
+                          onClick={() => handleDeleteComment(photo._id, c._id)}
+                          className="delete-button"
+                        >
+                          Delete
+                        </IconButton>
+                      )}
+                      {editCommentId === c._id && (
+                        <>
+                          <IconButton
+                            onClick={() => handleUpdateComment(photo._id)}
+                            className="save-button"
+                          >
+                            Save
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleCancelEdit()}
+                            className="cancel-button"
+                          >
+                            Cancel
+                          </IconButton>
+                        </>
+                      )}
+                    </List>
+                  ))}
+                  <TextField
+                    label="Add a comment"
+                    variant="outlined"
+                    fullWidth
+                    value={comments[photo._id]}
+                    onChange={(e) =>
+                      handleCommentChange(photo._id, e.target.value)
+                    }
+                    margin="normal"
+                    className="add-comment-textfield"
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleAddComment(photo._id)}
+                    className="post-comment-button"
                   >
-                    {new Date(c.date_time).toLocaleString()}
-                  </Typography>
-                  {editCommentId === c._id ? (
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      value={editCommentText}
-                      onChange={(e) => setEditCommentText(e.target.value)}
-                      className="edit-comment-textfield"
-                    />
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      className="comment-body"
-                    >{`"${c.comment}"`}</Typography>
-                  )}
-                  {c.user_id === currentUser._id && (
-                    <IconButton
-                      onClick={() =>
-                        handleEditComment(photo._id, c._id, c.comment)
-                      }
-                      className="edit-button"
+                    Post Comment
+                  </Button>
+                  {photo.user_id === currentUser._id && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleDeletePhoto(photo._id)}
+                      className="delete-photo-button"
                     >
-                      Edit
-                    </IconButton>
+                      Delete Photo
+                    </Button>
                   )}
-                  {(c.user_id === currentUser._id ||
-                    photo.user_id === currentUser._id) && (
-                    <IconButton
-                      onClick={() => handleDeleteComment(photo._id, c._id)}
-                      className="delete-button"
-                    >
-                      Delete
-                    </IconButton>
-                  )}
-                  {editCommentId === c._id && (
-                    <IconButton
-                      onClick={() => handleUpdateComment(photo._id)}
-                      className="save-button"
-                    >
-                      Save
-                    </IconButton>
-                  )}
-                </List>
-              ))}
-              <TextField
-                label="Add a comment"
-                variant="outlined"
-                fullWidth
-                value={comments[photo._id]}
-                onChange={(e) => handleCommentChange(photo._id, e.target.value)}
-                margin="normal"
-                className="add-comment-textfield"
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleAddComment(photo._id)}
-                className="post-comment-button"
-              >
-                Post Comment
-              </Button>
-              {photo.user_id === currentUser._id && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleDeletePhoto(photo._id)}
-                  className="delete-photo-button"
-                >
-                Delete Photo
-                </Button>
-              )
-            } 
-              
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </>
+      )}
     </Grid>
   );
 };

@@ -38,7 +38,8 @@ function UploadPhoto() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    // them class de css
+    <form className="upload-form" onSubmit={handleSubmit}>
       <input type="file" onChange={handleFileChange} />
       <button type="submit">Upload Photo</button>
     </form>
