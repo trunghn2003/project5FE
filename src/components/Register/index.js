@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { path } from "../../path";
 
 function Register() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function Register() {
       return;
     }
 
-    const response = await fetch("http://localhost:8081/admin/register", {
+    const response = await fetch(`${path}admin/registe"`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

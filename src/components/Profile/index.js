@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { path } from '../../path';
 
 function Profile({ auth, setAuth, users, updateUsers }) {
   const [userDetails, setUserDetails] = useState({
@@ -20,7 +21,7 @@ function Profile({ auth, setAuth, users, updateUsers }) {
   useEffect(() => {
     // Fetch user details based on ID from the URL
     const fetchUserData = async () => {
-      const response = await fetch(`http://localhost:8081/api/user/${id}`, {
+      const response = await fetch(`${path}api/user/${id}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -46,7 +47,7 @@ function Profile({ auth, setAuth, users, updateUsers }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`http://localhost:8081/api/user/update`, {
+    const response = await fetch(`${path}api/user/update`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

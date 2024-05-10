@@ -32,8 +32,8 @@ const UserPhotos = () => {
   }, [userId]);
 
   const fetchUserDataAndPhotos = async () => {
-    const userPhotos = await fetchModel(`${path}photo/photosOfUser/${userId}`);
-    const userInfo = await fetchModel(`${path}user/${userId}`);
+    const userPhotos = await fetchModel(`${path}api/photo/photosOfUser/${userId}`);
+    const userInfo = await fetchModel(`${path}api/user/${userId}`);
     setPhotos(userPhotos || []);
     setUser(userInfo);
     setComments(
@@ -53,7 +53,7 @@ const UserPhotos = () => {
       comment: commentText,
     };
 
-    const response = await fetch(`${path}photo/commentsOfPhoto/${photoId}`, {
+    const response = await fetch(`${path}api/photo/commentsOfPhoto/${photoId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const UserPhotos = () => {
   const handleDeleteComment = async (photoId, commentId) => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
       const response = await fetch(
-        `${path}photo/commentsOfPhoto/photo/${photoId}/comment/${commentId}`,
+        `${path}api/photo/commentsOfPhoto/photo/${photoId}/comment/${commentId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -99,7 +99,7 @@ const UserPhotos = () => {
     }
 
     const response = await fetch(
-      `${path}photo/commentsOfPhoto/photo/${photoId}/comment/${editCommentId}`,
+      `${path}api/photo/commentsOfPhoto/photo/${photoId}/comment/${editCommentId}`,
       {
         method: "PUT",
         headers: {
@@ -184,7 +184,7 @@ const UserPhotos = () => {
                   component="img"
                   image={
                     photo.file_name
-                      ? `http://localhost:8081/uploads/${photo.file_name}`
+                      ? `${path}uploads/${photo.file_name}`
                       : undefined
                   }
                   alt={photo.file_name}

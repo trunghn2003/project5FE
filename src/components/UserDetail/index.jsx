@@ -17,7 +17,7 @@ function UserDetail() {
   useEffect(() => {
       const fetchUser = async () => {
           try {
-              const userData =  await fetchModel(`${path}user/${userId}`)
+              const userData =  await fetchModel(`${path}api/user/${userId}`)
               
               setUser(userData);
           } catch (error) {

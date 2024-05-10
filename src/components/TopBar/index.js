@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { path } from "../../path";
 
 const TopBar = ({ auth, setAuth }) => {
   const { pathname } = useLocation();
@@ -21,7 +22,7 @@ const TopBar = ({ auth, setAuth }) => {
       }
       // Fetch user details from the server using the ID from localStorage
       const fetchUserData = async () => {
-        const response = await fetch(`http://localhost:8081/api/user/${userId}`, {
+        const response = await fetch(`${path}user/${userId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 

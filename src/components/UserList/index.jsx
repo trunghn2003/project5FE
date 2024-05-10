@@ -10,7 +10,7 @@ const UserList = ({ updateUsers }) => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const fetchedUsers = await fetchModel(`${path}user/list`);
+      const fetchedUsers = await fetchModel(`${path}api/user/list`);
       setUsers(fetchedUsers);
     };
 

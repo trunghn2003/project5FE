@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { path } from '../../path';
 
 function Login({ setAuth }) {
   const [loginName, setLoginName] = useState('');
@@ -10,7 +11,7 @@ function Login({ setAuth }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:8081/admin/login', {
+    const response = await fetch(`${path}admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ login_name: loginName, password }),

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { path } from "../../path";
 
 function UploadPhoto() {
   const [file, setFile] = useState(null);
@@ -19,7 +20,7 @@ function UploadPhoto() {
     const formData = new FormData();
     formData.append("photo", file);
 
-    const response = await fetch("http://localhost:8081/api/photo", {
+    const response = await fetch(`${path}api/photo`, {
       // Cập nhật endpoint
       method: "POST",
       headers: {
