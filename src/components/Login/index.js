@@ -28,7 +28,7 @@ function Login({ setAuth }) {
   };
 
   const handleRegisterRedirect = () => {
-    navigate('/register'); // Redirect to the Register page
+    navigate('/register'); 
   };
 
   return (

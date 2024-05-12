@@ -1,1 +1,1 @@
-export const path = "https://photo-sharing-app-h3m4.onrender.com/";
+export const path = "http://localhost:8081/";

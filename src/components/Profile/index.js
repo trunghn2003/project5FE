@@ -1,4 +1,3 @@
-// Profile.js
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
@@ -19,7 +18,6 @@ function Profile({ auth, setAuth, users, updateUsers }) {
   const id  = pathname.split("/").pop();
 
   useEffect(() => {
-    // Fetch user details based on ID from the URL
     const fetchUserData = async () => {
       const response = await fetch(`${path}api/user/${id}`, {
         headers: {
@@ -60,7 +58,6 @@ function Profile({ auth, setAuth, users, updateUsers }) {
       const updatedUser = await response.json();
       setAuth({ ...auth, user: updatedUser });
       setMessage({ type: 'success', text: 'Profile updated successfully' });
-      // After updating the profile
       updateUsers();
     } else {
       setMessage({ type: 'danger', text: 'Error updating profile' });

@@ -1,4 +1,3 @@
-// Register.js
 import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,6 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation for password confirmation
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
       return;
@@ -39,7 +37,6 @@ function Register() {
       setSuccessMessage("User registered successfully");
       navigate("/")
       setErrorMessage("");
-      // Clear the form fields after successful registration
       setLoginName("");
       setPassword("");
       setConfirmPassword("");

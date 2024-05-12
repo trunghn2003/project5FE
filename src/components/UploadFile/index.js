@@ -21,7 +21,6 @@ function UploadPhoto() {
     formData.append("photo", file);
 
     const response = await fetch(`${path}api/photo`, {
-      // Cập nhật endpoint
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -39,7 +38,6 @@ function UploadPhoto() {
   };
 
   return (
-    // them class de css
     <form className="upload-form" onSubmit={handleSubmit}>
       <input type="file" onChange={handleFileChange} />
       <button type="submit">Upload Photo</button>

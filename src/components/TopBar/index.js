@@ -1,4 +1,4 @@
-// TopBar.js
+
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
@@ -9,10 +9,9 @@ const TopBar = ({ auth, setAuth }) => {
   const navigate = useNavigate();
   const [context, setContext] = useState('');
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
-  const token = localStorage.getItem('token'); // Get token from localStorage
+  const token = localStorage.getItem('token'); 
   useEffect(() => {
 
-    // This will be triggered when the pathname changes.
     if (token && user) {
       let userId;
       if (pathname.includes("/user")) {
@@ -20,7 +19,6 @@ const TopBar = ({ auth, setAuth }) => {
       } else if (pathname.includes("/photos")) {
         userId = pathname.split("/")[2];
       }
-      // Fetch user details from the server using the ID from localStorage
       const fetchUserData = async () => {
         const response = await fetch(`${path}user/${userId}`, {
           headers: {
@@ -32,7 +30,7 @@ const TopBar = ({ auth, setAuth }) => {
           if(userId){
 
             const data = await response.json();
-            // Update context based on the pathname and fetched data
+            
             if (pathname.includes("/photos")) {
               setContext(`Photos of ${data.first_name} ${data.last_name}`);
             } else {
@@ -42,7 +40,7 @@ const TopBar = ({ auth, setAuth }) => {
         } else {
           setContext('');
           if (response.status === 401) {
-            // Handle unauthorized error, clear local storage and update state
+            
             localStorage.removeItem("token");
             localStorage.removeItem("user");
             setAuth({ loggedIn: false, user: null });
@@ -55,10 +53,10 @@ const TopBar = ({ auth, setAuth }) => {
   }, [pathname, navigate, setAuth, user, token]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear token from local storage
-    localStorage.removeItem("user"); // Clear user data from local storage
-    setAuth({ loggedIn: false, user: null }); // Update auth state
-    navigate("/login"); // Redirect to login page
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("user"); 
+    setAuth({ loggedIn: false, user: null }); 
+    navigate("/login"); 
   };
 
   return (

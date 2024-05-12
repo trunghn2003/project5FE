@@ -125,7 +125,7 @@ const UserPhotos = () => {
   };
   const handleDeletePhoto = async (photoId) => {
     if (window.confirm("Are you sure you want to delete this photo?")) {
-      const response = await fetch(`${path}photo/${photoId}`, {
+      const response = await fetch(`${path}api/photo/${photoId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
