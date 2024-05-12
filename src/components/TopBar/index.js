@@ -20,7 +20,7 @@ const TopBar = ({ auth, setAuth }) => {
         userId = pathname.split("/")[2];
       }
       const fetchUserData = async () => {
-        const response = await fetch(`${path}user/${userId}`, {
+        const response = await fetch(`${path}api/user/${userId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 

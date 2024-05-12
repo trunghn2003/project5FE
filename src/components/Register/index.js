@@ -21,12 +21,12 @@ function Register() {
       return;
     }
 
-    const response = await fetch(`${path}admin/registe"`, {
+    const response = await fetch(`${path}admin/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         login_name: loginName,
-        password,
+        password : password,
         first_name: firstName,
         last_name: lastName,
       }),

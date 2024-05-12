@@ -26,13 +26,17 @@ const UserPhotos = () => {
   const { userId } = useParams();
   const token = localStorage.getItem("token");
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const [editTitleId, setEditTitleId] = useState(null);
+  const [editTitleText, setEditTitleText] = useState("");
 
   useEffect(() => {
     fetchUserDataAndPhotos();
   }, [userId]);
 
   const fetchUserDataAndPhotos = async () => {
-    const userPhotos = await fetchModel(`${path}api/photo/photosOfUser/${userId}`);
+    const userPhotos = await fetchModel(
+      `${path}api/photo/photosOfUser/${userId}`
+    );
     const userInfo = await fetchModel(`${path}api/user/${userId}`);
     setPhotos(userPhotos || []);
     setUser(userInfo);
@@ -53,14 +57,17 @@ const UserPhotos = () => {
       comment: commentText,
     };
 
-    const response = await fetch(`${path}api/photo/commentsOfPhoto/${photoId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(commentData),
-    });
+    const response = await fetch(
+      `${path}api/photo/commentsOfPhoto/${photoId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(commentData),
+      }
+    );
 
     if (response.ok) {
       await fetchUserDataAndPhotos(); // Refresh photos and user data after comment is added
@@ -122,6 +129,8 @@ const UserPhotos = () => {
   const handleCancelEdit = () => {
     setEditCommentId(null);
     setEditCommentText("");
+    setEditTitleId(null);
+    setEditTitleText("");
   };
   const handleDeletePhoto = async (photoId) => {
     if (window.confirm("Are you sure you want to delete this photo?")) {
@@ -138,11 +147,34 @@ const UserPhotos = () => {
       }
     }
   };
+  const handleUpdateTitle = async (photoId) => {
+    if (!editTitleText.trim()) {
+      alert("Title cannot be empty");
+      return;
+    }
+
+    const response = await fetch(`${path}api/photo/editPhoto/${photoId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title: editTitleText }),
+    });
+
+    if (response.ok) {
+      alert("Title updated successfully");
+      setEditTitleId(null);
+      setEditTitleText("");
+      fetchUserDataAndPhotos(); // Refresh the photos and user data
+    } else {
+      alert("Failed to update title");
+    }
+  };
 
   const handleCommentChange = (photoId, value) => {
     setComments({ ...comments, [photoId]: value });
   };
-
   return (
     <Grid container spacing={3} justifyContent="center">
       {photos.length === 0 ? (
@@ -180,6 +212,52 @@ const UserPhotos = () => {
                     )
                   }
                 />
+                {editTitleId === photo._id ? (
+                <>
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    value={editTitleText}
+                    onChange={(e) => setEditTitleText(e.target.value)}
+                  />
+                  <IconButton
+                  className="edit-title-button"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleUpdateTitle(photo._id)}
+                    style={{ margin: "5px" }}
+                  >
+                    Save
+                  </IconButton>
+                  <IconButton
+                  className="edit-title-button"
+                    variant="contained"
+                    onClick={() => {
+                      setEditTitleId(null);
+                      setEditTitleText("");
+                    }}
+                    style={{ margin: "5px" }}
+                  >
+                    Cancel
+                  </IconButton>
+                </>
+                ) : (
+                <>
+                  <Typography variant="h6">{photo.title}</Typography>
+                  {photo.user_id === currentUser._id && (
+                    <IconButton
+                    className="edit-title-button"
+                      onClick={() => {
+                        setEditTitleId(photo._id);
+                        setEditTitleText(photo.title);
+                      }}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Edit
+                    </IconButton>
+                  )}
+                </>
+                ) }
                 <CardMedia
                   component="img"
                   image={
@@ -278,14 +356,16 @@ const UserPhotos = () => {
                     Post Comment
                   </Button>
                   {photo.user_id === currentUser._id && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleDeletePhoto(photo._id)}
-                      className="delete-photo-button"
-                    >
-                      Delete Photo
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleDeletePhoto(photo._id)}
+                        className="delete-photo-button"
+                      >
+                        Delete Photo
+                      </Button>
+                    </>
                   )}
                 </CardContent>
               </Card>

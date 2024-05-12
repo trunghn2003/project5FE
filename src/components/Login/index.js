@@ -22,6 +22,9 @@ function Login({ setAuth }) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user)); 
       setAuth({ loggedIn: true, user: data.user });
+      // add name to alert
+      alert(`Login successful ${data.user.first_name}!`)
+      navigate('/');
     } else {
       alert(data.error);
     }
