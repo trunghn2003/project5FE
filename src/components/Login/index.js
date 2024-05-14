@@ -8,7 +8,7 @@ function Login({ setAuth }) {
   const [loginName, setLoginName] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate(); 
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(`${path}admin/login`, {
@@ -23,10 +23,10 @@ function Login({ setAuth }) {
       localStorage.setItem('user', JSON.stringify(data.user)); 
       setAuth({ loggedIn: true, user: data.user });
       // add name to alert
-      alert(`Login successful ${data.user.first_name}!`)
-      navigate('/');
-    } else {
-      alert(data.error);
+      // alert(`Login successful ${data.user.first_name}!`)
+      // console.log(user);
+      navigate(`/users/${data.user._id}`);
+      // alert(data.error);
     }
   };
 

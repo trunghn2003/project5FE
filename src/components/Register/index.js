@@ -15,9 +15,17 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!loginName || !password || !confirmPassword || !firstName || !lastName) {
+      setErrorMessage("All fields must be filled");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
+      return;
+    }
+    if (password.length < 6 || !/[A-Z]/.test(password)) {
+      setErrorMessage("Password must be at least 6 characters and contain at least one uppercase letter");
       return;
     }
 

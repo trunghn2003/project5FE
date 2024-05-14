@@ -10,6 +10,20 @@ const TopBar = ({ auth, setAuth }) => {
   const [context, setContext] = useState('');
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
   const token = localStorage.getItem('token'); 
+  const fetchUserData1 = async () => {
+    const response = await fetch(`${path}api/user/${user._id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      }
+    
+    });
+
+    const data = await response.json();
+
+      setContext(`Welcome ${data.first_name} ${data.last_name}`);
+
+  }
   useEffect(() => {
 
     if (token && user) {
@@ -28,17 +42,27 @@ const TopBar = ({ auth, setAuth }) => {
         });
         if (response.ok) {
           if(userId){
+            
 
             const data = await response.json();
             
             if (pathname.includes("/photos")) {
               setContext(`Photos of ${data.first_name} ${data.last_name}`);
-            } else {
+            } 
+             if (pathname.includes("/user")) {
               setContext(`Details of ${data.first_name} ${data.last_name}`);
             }
+           
+
+
           }
         } else {
-          setContext('');
+          // console.log(user._id);
+          
+          
+          // console.log("user");
+          // setContext(`Welcome ${user.first_name} `);
+          // console.log(user.first_name);
           if (response.status === 401) {
             
             localStorage.removeItem("token");
@@ -49,13 +73,15 @@ const TopBar = ({ auth, setAuth }) => {
         }
       };
       fetchUserData();
+      fetchUserData1();
     }
-  }, [pathname, navigate, setAuth, user, token]);
+  }, [pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); 
     localStorage.removeItem("user"); 
     setAuth({ loggedIn: false, user: null }); 
+    setContext('');
     navigate("/login"); 
   };
 

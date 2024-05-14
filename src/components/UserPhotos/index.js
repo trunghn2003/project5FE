@@ -86,7 +86,7 @@ const UserPhotos = () => {
         }
       );
       if (response.ok) {
-        alert("Comment deleted successfully");
+        // alert("Comment deleted successfully");
         fetchUserDataAndPhotos();
       } else {
         alert("Failed to delete comment");
@@ -118,7 +118,7 @@ const UserPhotos = () => {
     );
 
     if (response.ok) {
-      alert("Comment updated successfully");
+      // alert("Comment updated successfully");
       setEditCommentId(null);
       setEditCommentText("");
       fetchUserDataAndPhotos();
@@ -163,7 +163,7 @@ const UserPhotos = () => {
     });
 
     if (response.ok) {
-      alert("Title updated successfully");
+      // alert("Title updated successfully");
       setEditTitleId(null);
       setEditTitleText("");
       fetchUserDataAndPhotos(); // Refresh the photos and user data
